@@ -234,7 +234,7 @@ html5lib==1.1
 httpcore==0.17.3
 httplib2==0.20.2
 jsonschema==4.17.1
-jsonschema-specifications==2023.7.1
+jsonschema-specifications==0.1.2
 dataclasses-json==0.5.14
 grpcio==1.56.2
 grpcio-tools==1.56.2
