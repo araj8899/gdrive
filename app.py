@@ -242,7 +242,7 @@ def main():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
 
-    st.header("Chat with ChatBotAi :book:")
+    st.header("Chat with the ChatBotAi :book:")
     user_question = st.text_input("Ask me a question :")
     if user_question:
         handle_userinput(user_question)
