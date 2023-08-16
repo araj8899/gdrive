@@ -16,10 +16,10 @@ from google.auth.transport.requests import Request
 import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
-# import docx
+import docx
 import pytesseract
 from PIL import Image
-# import easyocr
+import easyocr
 import openpyxl
 
 #scopes for Google Drive API
@@ -64,35 +64,35 @@ def read_pdf_content(pdf_path):
             text += page.extract_text()
     return text
 
-# def read_docx(file_path):
-#     doc = docx.Document(file_path)
-#     text = ""
-#     for paragraph in doc.paragraphs:
-#         text += paragraph.text + "\n"
-#     return text
+def read_docx(file_path):
+    doc = docx.Document(file_path)
+    text = ""
+    for paragraph in doc.paragraphs:
+        text += paragraph.text + "\n"
+    return text
 
-# def read_image(image_file_name):
-#     # myconfig = r"--psm 11 --oem 3"
-#     # pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
-#     # image = Image.open(image_file_name)
-#     # image_content = pytesseract.image_to_string(image, config= myconfig)
-#     # return image_content
-#     reader = easyocr.Reader(['en'])
-#     result = reader.readtext(image_file_name)
-#     extracted_text = [text for (_, text, _) in result]
-#     extracted_text_string = " ".join(extracted_text)
-#     return extracted_text_string
+def read_image(image_file_name):
+    # myconfig = r"--psm 11 --oem 3"
+    # pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
+    # image = Image.open(image_file_name)
+    # image_content = pytesseract.image_to_string(image, config= myconfig)
+    # return image_content
+    reader = easyocr.Reader(['en'])
+    result = reader.readtext(image_file_name)
+    extracted_text = [text for (_, text, _) in result]
+    extracted_text_string = " ".join(extracted_text)
+    return extracted_text_string
 
-# def read_excel(excel_file_name): 
-#     workbook = openpyxl.load_workbook(excel_file_name)
-#     worksheet = workbook["Mayurs KT"]
-#     extracted_text = []
-#     for row in worksheet.iter_rows(values_only=True):
-#         for cell_value in row:
-#             if cell_value:
-#                 extracted_text.append(cell_value)
-#     for text in extracted_text:
-#         print(text)
+def read_excel(excel_file_name): 
+    workbook = openpyxl.load_workbook(excel_file_name)
+    worksheet = workbook["Mayurs KT"]
+    extracted_text = []
+    for row in worksheet.iter_rows(values_only=True):
+        for cell_value in row:
+            if cell_value:
+                extracted_text.append(cell_value)
+    for text in extracted_text:
+        print(text)
 
 def read_file_contents(file_id):
     """Read the contents of a file given its file ID."""
