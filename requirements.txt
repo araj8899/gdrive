@@ -4,7 +4,6 @@ google_auth_oauthlib==1.0.0
 langchain==0.0.266
 openpyxl==3.1.2
 Pillow==9.0.1
-Pillow==10.0.0
 protobuf==3.12.4
 PyPDF2==3.0.1
 pytesseract==0.3.10
