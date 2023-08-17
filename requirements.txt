@@ -1,11 +1,11 @@
 easyocr==1.7.0
 google_api_python_client==2.93.0
 google_auth_oauthlib==1.0.0
-langchain==0.0.266
+langchain==0.0.25
 openpyxl==3.1.2
 Pillow==9.0.1
 protobuf==3.12.4
 PyPDF2==3.0.1
 pytesseract==0.3.10
 python-dotenv==1.0.0
-streamlit==1.25.0
+streamlit==1.21.0
