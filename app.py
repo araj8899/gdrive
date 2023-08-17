@@ -16,6 +16,7 @@ from google.auth.transport.requests import Request
 import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
+from github import Github
 # import docx
 import pytesseract
 from PIL import Image
@@ -23,7 +24,6 @@ import easyocr
 import openpyxl
 
 #scopes for Google Drive API
-client_secrets={"web":{"client_id":"292022687379-ogol5hn3vdgu1s0s54580ah1skbsbfgq.apps.googleusercontent.com","project_id":"gdrivebot-393312","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"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","redirect_uris":["https://gdrive-file-gfdnj9zwfwwhf9dwj7zcr6.streamlit.app/"]}}
 SCOPES = ['https://www.googleapis.com/auth/drive']
 my_dict = []
 def get_authenticated_service():
@@ -40,9 +40,14 @@ def get_authenticated_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(client_secrets, SCOPES)
-            creds = flow.run_local_server(port=0)
-        
+            g = Github('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')
+            repo = g.get_repo('araj8899/gdrive')
+            contents = repo.get_contents('token.json')
+            decoded = contents.decoded_content
+            with open("token.json", "wb") as f:
+                    f.write(decoded)
+            flow = InstalledAppFlow.from_client_secrets_file('token.json', SCOPES)
+            creds = flow.run_local_server(port=0)      
         # Save the credentials for future use
         with open('token.pickle', 'wb') as token_file:
             pickle.dump(creds, token_file)
