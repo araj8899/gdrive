@@ -16,7 +16,7 @@ from google.auth.transport.requests import Request
 import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
-import docx
+# import docx
 import pytesseract
 from PIL import Image
 import easyocr
@@ -64,12 +64,12 @@ def read_pdf_content(pdf_path):
             text += page.extract_text()
     return text
 
-def read_docx(file_path):
-    doc = docx.Document(file_path)
-    text = ""
-    for paragraph in doc.paragraphs:
-        text += paragraph.text + "\n"
-    return text
+# def read_docx(file_path):
+#     doc = docx.Document(file_path)
+#     text = ""
+#     for paragraph in doc.paragraphs:
+#         text += paragraph.text + "\n"
+#     return text
 
 def read_image(image_file_name):
     # myconfig = r"--psm 11 --oem 3"
