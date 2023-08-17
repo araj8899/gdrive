@@ -24,12 +24,6 @@ import openpyxl
 
 #scopes for Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
-client_secrets = {"web":{"client_id":"236606901142-i2u76l4723svqog3q31k7uk3h8h7v7f0.apps.googleusercontent.com",
-                         "project_id":"allegiant-connect","auth_uri":"https://accounts.google.com/o/oauth2/auth",
-                         "token_uri":"https://oauth2.googleapis.com/token",
-                         "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-                         "client_secret":"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",
-                         "redirect_uris":["http://127.0.0.1:5000/oauth/redirect"]}}
 my_dict = []
 def get_authenticated_service():
     """Authenticate and create a Google Drive API service."""
@@ -45,7 +39,7 @@ def get_authenticated_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(client_secrets, SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file('/home/p10/GENAi_project/Google-drive/client_secret_292022687379-tvbud7tbnrb1dm6f37hufv74fdf00s5c.apps.googleusercontent.com.json', SCOPES)
             creds = flow.run_local_server(port=0)
         
         # Save the credentials for future use
