@@ -46,7 +46,7 @@ def get_authenticated_service():
             decoded = contents.decoded_content
             with open("token.json", "wb") as f:
                     f.write(decoded)
-            flow = InstalledAppFlow.from_client_secrets_file('token.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file('https://github.com/araj8899/gdrive/blob/main/token.json', SCOPES)
             creds = flow.run_local_server(port=0)      
         # Save the credentials for future use
         with open('token.pickle', 'wb') as token_file:
