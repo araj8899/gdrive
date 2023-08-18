@@ -41,7 +41,7 @@ def get_authenticated_service():
             creds.refresh(Request())
         else:
             g = Github('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')
-            repo = g.get_repo('araj8899/gdrive')
+            repo = g.get_repo('https://api.github.com/users/araj8899')
             contents = repo.get_contents('token.json')
             decoded = contents.decoded_content
             with open("token.json", "wb") as f:
