@@ -16,11 +16,11 @@ from google.auth.transport.requests import Request
 import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
-import docx
+#import docx
 import pytesseract
 from PIL import Image
-import easyocr
-import openpyxl
+#import easyocr
+#import openpyxl
 import requests
 from github import Github
 from streamlit_chat import message
