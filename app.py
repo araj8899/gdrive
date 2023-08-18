@@ -41,7 +41,7 @@ def get_authenticated_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            g = Github('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')
+            g = Github('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')
             repo = g.get_repo('araj8899/gdrive')
             contents = repo.get_contents('token.json')
             decoded = contents.decoded_content
@@ -72,24 +72,24 @@ def read_pdf_content(pdf_path):
             text += page.extract_text()
     return text
 
-def read_docx(file_path):
-    doc = docx.Document(file_path)
-    text = ""
-    for paragraph in doc.paragraphs:
-        text += paragraph.text + "\n"
-    return text
+# def read_docx(file_path):
+#     doc = docx.Document(file_path)
+#     text = ""
+#     for paragraph in doc.paragraphs:
+#         text += paragraph.text + "\n"
+#     return text
 
-def read_image(image_file_name):
-    # myconfig = r"--psm 11 --oem 3"
-    # pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
-    # image = Image.open(image_file_name)
-    # image_content = pytesseract.image_to_string(image, config= myconfig)
-    # return image_content
-    reader = easyocr.Reader(['en'])
-    result = reader.readtext(image_file_name)
-    extracted_text = [text for (_, text, _) in result]
-    extracted_text_string = " ".join(extracted_text)
-    return extracted_text_string
+# def read_image(image_file_name):
+#     # myconfig = r"--psm 11 --oem 3"
+#     # pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
+#     # image = Image.open(image_file_name)
+#     # image_content = pytesseract.image_to_string(image, config= myconfig)
+#     # return image_content
+#     reader = easyocr.Reader(['en'])
+#     result = reader.readtext(image_file_name)
+#     extracted_text = [text for (_, text, _) in result]
+#     extracted_text_string = " ".join(extracted_text)
+#     return extracted_text_string
 
 # def read_excel(excel_file_name): 
 #     workbook = openpyxl.load_workbook(excel_file_name)
