@@ -16,13 +16,14 @@ from google.auth.transport.requests import Request
 import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
-from github import Github
-# import docx
+#import docx
 import pytesseract
 from PIL import Image
-import easyocr
-import openpyxl
-
+#import easyocr
+#import openpyxl
+import requests
+from github import Github
+from streamlit_chat import message
 #scopes for Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
 my_dict = []
@@ -40,14 +41,15 @@ def get_authenticated_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            g = Github('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')
-            repo = g.get_repo('https://api.github.com/users/araj8899')
+            g = Github('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')
+            repo = g.get_repo('araj8899/gdrive')
             contents = repo.get_contents('token.json')
             decoded = contents.decoded_content
             with open("token.json", "wb") as f:
                     f.write(decoded)
-            flow = InstalledAppFlow.from_client_secrets_file('https://github.com/araj8899/gdrive/blob/main/token.json', SCOPES)
-            creds = flow.run_local_server(port=0)      
+            flow = InstalledAppFlow.from_client_secrets_file('token.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        
         # Save the credentials for future use
         with open('token.pickle', 'wb') as token_file:
             pickle.dump(creds, token_file)
@@ -70,12 +72,12 @@ def read_pdf_content(pdf_path):
             text += page.extract_text()
     return text
 
-# def read_docx(file_path):
-#     doc = docx.Document(file_path)
-#     text = ""
-#     for paragraph in doc.paragraphs:
-#         text += paragraph.text + "\n"
-#     return text
+def read_docx(file_path):
+    doc = docx.Document(file_path)
+    text = ""
+    for paragraph in doc.paragraphs:
+        text += paragraph.text + "\n"
+    return text
 
 def read_image(image_file_name):
     # myconfig = r"--psm 11 --oem 3"
@@ -89,16 +91,16 @@ def read_image(image_file_name):
     extracted_text_string = " ".join(extracted_text)
     return extracted_text_string
 
-def read_excel(excel_file_name): 
-    workbook = openpyxl.load_workbook(excel_file_name)
-    worksheet = workbook["Mayurs KT"]
-    extracted_text = []
-    for row in worksheet.iter_rows(values_only=True):
-        for cell_value in row:
-            if cell_value:
-                extracted_text.append(cell_value)
-    for text in extracted_text:
-        print(text)
+# def read_excel(excel_file_name): 
+#     workbook = openpyxl.load_workbook(excel_file_name)
+#     worksheet = workbook["Mayurs KT"]
+#     extracted_text = []
+#     for row in worksheet.iter_rows(values_only=True):
+#         for cell_value in row:
+#             if cell_value:
+#                 extracted_text.append(cell_value)
+#     for text in extracted_text:
+#         print(text)
 
 def read_file_contents(file_id):
     """Read the contents of a file given its file ID."""
@@ -166,13 +168,11 @@ def handle_userinput(user_question):
     response = st.session_state.conversation({'question': user_question})
     st.session_state.chat_history = response['chat_history']
 
-    for i, message in enumerate(st.session_state.chat_history):
+    for i, msg in enumerate(st.session_state.chat_history):
         if i % 2 == 0:
-            st.write(user_template.replace(
-                "{{MSG}}", message.content), unsafe_allow_html=True)
+            message(msg.content, is_user=True)
         else:
-            st.write(bot_template.replace(
-                "{{MSG}}", message.content), unsafe_allow_html=True)
+            message(msg.content, is_user=False)
 
 def gdrive_api(): 
    service = get_authenticated_service()
@@ -188,14 +188,14 @@ def gdrive_api():
        pdf_content_added = pdf_file_name + " file contents : "+ pdf_content 
        my_dict.append(pdf_content_added)
 
-   plain_files = fetch_files_with_format(service, 'text/plain')
-   for file in plain_files:
-       print(f"{file['name']} - {file['id']}")
-       plain_file_name = file['name']
-       plain_file_id = file['id']
-       plain_file_content = read_file_contents(plain_file_id)
-       plain_content_added = plain_file_name + " file contents : "+ plain_file_content
-       my_dict.append(plain_content_added) 
+#    plain_files = fetch_files_with_format(service, 'text/plain')
+#    for file in plain_files:
+#        print(f"{file['name']} - {file['id']}")
+#        plain_file_name = file['name']
+#        plain_file_id = file['id']
+#        plain_file_content = read_file_contents(plain_file_id)
+#        plain_content_added = plain_file_name + " file contents : "+ plain_file_content
+#        my_dict.append(plain_content_added) 
 
 #    doc_files = fetch_files_with_format(service, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 #    for file in doc_files:
@@ -242,21 +242,22 @@ def main():
     load_dotenv()
     st.set_page_config(page_title="PhantomAI",
                        page_icon=":books:")
+    
     st.write(css, unsafe_allow_html=True)
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
-
-    st.header("Chat with the ChatBotAi :book:")
-    user_question = st.text_input("Ask me a question :")
+    st.header("Chat with ChatBotAi :book:")
+    with st.sidebar: 
+       user_question = st.text_input("Ask me a question :")
     if user_question:
         handle_userinput(user_question)
     if st.button("START"):
       gdrive_api()
       my_files_str = json.dumps(my_dict)
       print(my_files_str)
-      with st.spinner("Processing"):
+      with st.spinner("Thinking...."):
 
           # get the text chunks
           text_chunks = get_text_chunks(my_files_str)
