@@ -40,7 +40,7 @@ def get_authenticated_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            g = Github('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')
+            g = Github('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')
             repo = g.get_repo('araj8899/gdrive')
             contents = repo.get_contents('token.json')
             decoded = contents.decoded_content
