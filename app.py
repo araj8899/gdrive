@@ -41,14 +41,30 @@ def get_authenticated_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            Gtoken = os.getenv("GITHUB_TOKEN")
-            g = Github(Gtoken)
-            repo = g.get_repo('araj8899/gdrive')
-            contents = repo.get_contents('token.json')
-            decoded = contents.decoded_content
-            with open("token.json", "wb") as f:
-                    f.write(decoded)
-            flow = InstalledAppFlow.from_client_secrets_file('token.json', SCOPES)
+            token_data ='''
+                {
+                  "installed": {
+                    "client_id": "837087836120-bva3665m922448md864mgg3vutqvahrl.apps.googleusercontent.com",
+                    "project_id": "my-project-393306",
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                    "client_secret": "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",
+                    "redirect_uris": [
+                      "https://gdrive-file-gfdnj9zwfwwhf9dwj7zcr6.streamlit.app/"
+                    ]}
+            }
+            '''
+            token_json = json.loads(token_data)
+
+            # Gtoken = os.getenv("GITHUB_TOKEN")
+            # g = Github(Gtoken)
+            # repo = g.get_repo('araj8899/gdrive')
+            # contents = repo.get_contents('token.json')
+            # decoded = contents.decoded_content
+            # with open("token.json", "wb") as f:
+            #         f.write(decoded)
+            flow = InstalledAppFlow.from_client_config(token_json, SCOPES)
             creds = flow.run_local_server(port=0)
         
         # Save the credentials for future use
