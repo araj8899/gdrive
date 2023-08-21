@@ -51,7 +51,7 @@ def get_authenticated_service():
                     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
                     "client_secret": "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",
                     "redirect_uris": [
-                      "https://gdrive-file-gfdnj9zwfwwhf9dwj7zcr6.streamlit.app/"
+                      "https://gdrive-file-gfdnj9zwfwwhf9dwj7zcr6.streamlit.app"
                     ]
                   }
                 }
