@@ -42,11 +42,19 @@ def get_authenticated_service():
             creds.refresh(Request())
         else:
             token_data ='''
-                {"NXc":{"client_id":"292022687379-ogol5hn3vdgu1s0s54580ah1skbsbfgq.apps.googleusercontent.com",
-                "project_id":"gdrivebot-393312","Anc":"https://accounts.google.com/o/oauth2/auth",
-                "hVc":"https://oauth2.googleapis.com/token",
-                "znc":"https://www.googleapis.com/oauth2/v1/certs",
-                "s2a":"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"}}
+                {
+                  "web": {
+                    "client_id": "837087836120-971gkg5ua4dmkdk70qb9o0804ap49it3.apps.googleusercontent.com",
+                    "project_id": "my-project-393306",
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                    "client_secret": "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",
+                    "redirect_uris": [
+                      "https://gdrive-file-gfdnj9zwfwwhf9dwj7zcr6.streamlit.app"
+                    ]
+                  }
+                }
             '''
             token_json = json.loads(token_data)
 
