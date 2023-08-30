@@ -42,7 +42,7 @@ def get_authenticated_service():
             creds.refresh(Request())
         else:
             token_data ='''
-                {"WCc":{"client_id":"292022687379-l7k81eki26cd7bnh6bof53oqpn5qr4kk.apps.googleusercontent.com","project_id":"gdrivebot-393312","Anc":"https://accounts.google.com/o/oauth2/auth","hVc":"https://oauth2.googleapis.com/token","znc":"https://www.googleapis.com/oauth2/v1/certs","s2a":"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","oNc":["http://localhost"]}}
+                {"web":{"client_id":"292022687379-l7k81eki26cd7bnh6bof53oqpn5qr4kk.apps.googleusercontent.com","project_id":"gdrivebot-393312","Anc":"https://accounts.google.com/o/oauth2/auth","hVc":"https://oauth2.googleapis.com/token","znc":"https://www.googleapis.com/oauth2/v1/certs","s2a":"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","oNc":["http://localhost"]}}
             '''
             token_json = json.loads(token_data)
 
