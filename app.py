@@ -16,14 +16,15 @@ from google.auth.transport.requests import Request
 import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
-#import docx
+import docx
 import pytesseract
 from PIL import Image
-#import easyocr
+import easyocr
 #import openpyxl
 import requests
 from github import Github
 from streamlit_chat import message
+from datetime import date
 #scopes for Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
 my_dict = []
@@ -43,28 +44,20 @@ def get_authenticated_service():
         else:
             token_data ='''
                 {
-                  "web": {
-                    "client_id": "837087836120-971gkg5ua4dmkdk70qb9o0804ap49it3.apps.googleusercontent.com",
-                    "project_id": "my-project-393306",
-                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                    "client_secret": "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",
-                    "redirect_uris": [
-                      "https://gdrive-file-gfdnj9zwfwwhf9dwj7zcr6.streamlit.app/"
+                  "installed": {
+                  "client_id": "837087836120-bva3665m922448md864mgg3vutqvahrl.apps.googleusercontent.com",
+                  "project_id": "my-project-393306",
+                  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                  "token_uri": "https://oauth2.googleapis.com/token",
+                  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                  "client_secret": "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",
+                  "redirect_uris": [
+                    "https://google.com"
                     ]
                   }
                 }
             '''
             token_json = json.loads(token_data)
-
-            # Gtoken = os.getenv("GITHUB_TOKEN")
-            # g = Github(Gtoken)
-            # repo = g.get_repo('araj8899/gdrive')
-            # contents = repo.get_contents('token.json')
-            # decoded = contents.decoded_content
-            # with open("token.json", "wb") as f:
-            #         f.write(decoded)
             flow = InstalledAppFlow.from_client_config(token_json, SCOPES)
             creds = flow.run_local_server(port=0)
         
@@ -90,24 +83,19 @@ def read_pdf_content(pdf_path):
             text += page.extract_text()
     return text
 
-# def read_docx(file_path):
-#     doc = docx.Document(file_path)
-#     text = ""
-#     for paragraph in doc.paragraphs:
-#         text += paragraph.text + "\n"
-#     return text
+def read_docx(file_path):
+    doc = docx.Document(file_path)
+    text = ""
+    for paragraph in doc.paragraphs:
+        text += paragraph.text + "\n"
+    return text
 
-# def read_image(image_file_name):
-#     # myconfig = r"--psm 11 --oem 3"
-#     # pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
-#     # image = Image.open(image_file_name)
-#     # image_content = pytesseract.image_to_string(image, config= myconfig)
-#     # return image_content
-#     reader = easyocr.Reader(['en'])
-#     result = reader.readtext(image_file_name)
-#     extracted_text = [text for (_, text, _) in result]
-#     extracted_text_string = " ".join(extracted_text)
-#     return extracted_text_string
+def read_image(image_file_name):
+    reader = easyocr.Reader(['en'])
+    result = reader.readtext(image_file_name)
+    extracted_text = [text for (_, text, _) in result]
+    extracted_text_string = " ".join(extracted_text)
+    return extracted_text_string
 
 # def read_excel(excel_file_name): 
 #     workbook = openpyxl.load_workbook(excel_file_name)
@@ -191,20 +179,29 @@ def handle_userinput(user_question):
             message(msg.content, is_user=True)
         else:
             message(msg.content, is_user=False)
-
+    st.markdown(
+    """
+    <style>
+    msg.content {
+        font-size: 10rem !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 def gdrive_api(): 
    service = get_authenticated_service()
-   pdf_files = fetch_files_with_format(service, 'application/pdf')
-   for file in pdf_files:
-       print(f"{file['name']} - {file['id']}")
+#    pdf_files = fetch_files_with_format(service, 'application/pdf')
+#    for file in pdf_files:
+#        print(f"{file['name']} - {file['id']}")
        
-       pdf_file_id = file['id']
-       pdf_file_name = file['name']
+#        pdf_file_id = file['id']
+#        pdf_file_name = file['name']
 
-       download_files(service, pdf_file_id, pdf_file_name)
-       pdf_content = read_pdf_content(pdf_file_name)
-       pdf_content_added = pdf_file_name + " file contents : "+ pdf_content 
-       my_dict.append(pdf_content_added)
+#        download_files(service, pdf_file_id, pdf_file_name)
+#        pdf_content = read_pdf_content(pdf_file_name)
+#        pdf_content_added = pdf_file_name + " file contents : "+ pdf_content 
+#        my_dict.append(pdf_content_added)
 
 #    plain_files = fetch_files_with_format(service, 'text/plain')
 #    for file in plain_files:
@@ -215,15 +212,15 @@ def gdrive_api():
 #        plain_content_added = plain_file_name + " file contents : "+ plain_file_content
 #        my_dict.append(plain_content_added) 
 
-#    doc_files = fetch_files_with_format(service, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-#    for file in doc_files:
-#        print(f"{file['name']} - {file['id']}")
-#        doc_file_id = file['id']
-#        doc_file_name = file['name']
-#        download_files(service, doc_file_id, doc_file_name)
-#        doc_content = read_docx(doc_file_name)
-#        doc_content_added = doc_file_name + " file contents : "+ doc_content
-#        my_dict.append(doc_content_added)
+   doc_files = fetch_files_with_format(service, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+   for file in doc_files:
+       print(f"{file['name']} - {file['id']}")
+       doc_file_id = file['id']
+       doc_file_name = file['name']
+       download_files(service, doc_file_id, doc_file_name)
+       doc_content = read_docx(doc_file_name)
+       doc_content_added = doc_file_name + " file contents : "+ doc_content
+       my_dict.append(doc_content_added)
     
    
 #    image_png_files = fetch_files_with_format(service, 'image/png')
@@ -262,31 +259,33 @@ def main():
                        page_icon=":books:")
     
     st.write(css, unsafe_allow_html=True)
+    st.markdown(""" <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    </style> """, unsafe_allow_html=True)
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
+    if "code_executed" not in st.session_state:
+        st.session_state.code_executed = False
     st.header("Chat with ChatBotAi :book:")
     with st.sidebar: 
-       user_question = st.text_input("Ask me a question :")
+       st.header("Ask me a question !!")
+       user_question = st.text_input("*")
     if user_question:
         handle_userinput(user_question)
-    if st.button("START"):
+    if not st.session_state.code_executed:
       gdrive_api()
       my_files_str = json.dumps(my_dict)
       print(my_files_str)
       with st.spinner("Thinking...."):
-
           # get the text chunks
           text_chunks = get_text_chunks(my_files_str)
-
           # create vector store
           vectorstore = get_vectorstore(text_chunks)
-
           # create conversation chain
-          st.session_state.conversation = get_conversation_chain(
-              vectorstore)
-
-
+          st.session_state.conversation = get_conversation_chain(vectorstore)
+      st.session_state.code_executed = True
 if __name__ == '__main__':
     main()
