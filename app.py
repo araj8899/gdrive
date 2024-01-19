@@ -17,14 +17,14 @@ import pickle
 from googleapiclient.http import MediaIoBaseDownload
 import io
 import docx
-import pytesseract
 from PIL import Image
 import easyocr
 #import openpyxl
 import requests
-from github import Github
+#from github import Github
 from streamlit_chat import message
 from datetime import date
+import re
 #scopes for Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
 my_dict = []
@@ -97,19 +97,7 @@ def read_image(image_file_name):
     extracted_text_string = " ".join(extracted_text)
     return extracted_text_string
 
-# def read_excel(excel_file_name): 
-#     workbook = openpyxl.load_workbook(excel_file_name)
-#     worksheet = workbook["Mayurs KT"]
-#     extracted_text = []
-#     for row in worksheet.iter_rows(values_only=True):
-#         for cell_value in row:
-#             if cell_value:
-#                 extracted_text.append(cell_value)
-#     for text in extracted_text:
-#         print(text)
-
 def read_file_contents(file_id):
-    """Read the contents of a file given its file ID."""
     service = get_authenticated_service()
 
     try:
@@ -179,29 +167,21 @@ def handle_userinput(user_question):
             message(msg.content, is_user=True)
         else:
             message(msg.content, is_user=False)
-    st.markdown(
-    """
-    <style>
-    msg.content {
-        font-size: 10rem !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+        
+
 def gdrive_api(): 
    service = get_authenticated_service()
-#    pdf_files = fetch_files_with_format(service, 'application/pdf')
-#    for file in pdf_files:
-#        print(f"{file['name']} - {file['id']}")
+   pdf_files = fetch_files_with_format(service, 'application/pdf')
+   for file in pdf_files:
+       print(f"{file['name']} - {file['id']}")
        
-#        pdf_file_id = file['id']
-#        pdf_file_name = file['name']
+       pdf_file_id = file['id']
+       pdf_file_name = file['name']
 
-#        download_files(service, pdf_file_id, pdf_file_name)
-#        pdf_content = read_pdf_content(pdf_file_name)
-#        pdf_content_added = pdf_file_name + " file contents : "+ pdf_content 
-#        my_dict.append(pdf_content_added)
+       download_files(service, pdf_file_id, pdf_file_name)
+       pdf_content = read_pdf_content(pdf_file_name)
+       pdf_content_added = pdf_file_name + " file contents : "+ pdf_content 
+       my_dict.append(pdf_content_added)
 
 #    plain_files = fetch_files_with_format(service, 'text/plain')
 #    for file in plain_files:
@@ -242,22 +222,11 @@ def gdrive_api():
 #       image_content = read_image(image_file_name)
 #       image_content_added = image_file_name + " file contents : "+ image_content
 #       my_dict.append(image_content_added)
-    
-#    excel_files = fetch_files_with_format(service, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-#    for file in excel_files:
-#        print(f"{file['name']} - {file['id']}")
-#        excel_file_id = file['id']
-#        excel_file_name = file['name']
-#        download_files(service, excel_file_id, excel_file_name)
-#        excel_content = read_excel(excel_file_name)
-#        excel_content_added = excel_file_name + " file contents : "+ excel_content
-#        my_dict.append(excel_content_added)
-
 def main():
     load_dotenv()
+    
     st.set_page_config(page_title="PhantomAI",
                        page_icon=":books:")
-    
     st.write(css, unsafe_allow_html=True)
     st.markdown(""" <style>
     #MainMenu {visibility: hidden;}
@@ -267,17 +236,17 @@ def main():
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
-    if "code_executed" not in st.session_state:
-        st.session_state.code_executed = False
     st.header("Chat with ChatBotAi :book:")
     with st.sidebar: 
        st.header("Ask me a question !!")
        user_question = st.text_input("*")
     if user_question:
         handle_userinput(user_question)
-    if not st.session_state.code_executed:
+    if st.button("Process") :
       gdrive_api()
       my_files_str = json.dumps(my_dict)
+    #   triple_quoted_string = '""' + my_files_str[1:-1] + '""'
+    #   doc = triple_quoted_string.replace('ug', ' ')
       print(my_files_str)
       with st.spinner("Thinking...."):
           # get the text chunks
@@ -286,6 +255,5 @@ def main():
           vectorstore = get_vectorstore(text_chunks)
           # create conversation chain
           st.session_state.conversation = get_conversation_chain(vectorstore)
-      st.session_state.code_executed = True
 if __name__ == '__main__':
     main()
